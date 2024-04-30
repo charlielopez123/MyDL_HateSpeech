@@ -16,15 +16,10 @@ raw_datasets = load_dataset("ucberkeley-dlab/measuring-hate-speech")
 
 #keep only text and specific targets
 raw_columns = raw_datasets['train'].column_names
-keep_columns = ['text', 'target_race', 'target_religion', 'target_origin', 'target_gender', 'target_sexuality', 'target_age', 'target_disability']
+keep_columns = parameters.keep_columns
 remove_columns = set(raw_columns)-set(keep_columns)
 
 preprocessed_datasets = raw_datasets.remove_columns(remove_columns)
-
-column_mapping = {column:column.split('_')[1] for column in keep_columns if column.startswith('target')}
-print(f"COLUMN_MAPPING: {column_mapping}")
-
-preprocessed_datasets = preprocessed_datasets.rename_columns(column_mapping)
 
 # get two-way label and label id
 ID2LABEL = {}
@@ -209,4 +204,4 @@ def evaluate(model, dataloader):
 for epoch in range(num_training_epochs):
     train_metrics = train(model, dataloaders['train'])
 
-model.save_pretrained("wesleyachang_OG_model")
+model.save_pretrained(f"{CHECKPOINT}_{parameters.keep_columns[-1]}")
